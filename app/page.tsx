@@ -1,95 +1,104 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+import { useState, useEffect } from "react";
+import { Container, Typography, List, Box } from "@mui/material";
+import TaskForm from "./components/TaskForm";
+import TaskItem from "./components/TaskItem";
+import SearchForm from "./components/SearchForm";
+import SearchItem from "./components/SearchItem";
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [tasks, setTasks] = useState([]);
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+  useEffect(() => {
+    const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    setTasks(savedTasks);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
+
+  const addTask = (taskText) => {
+    const newTask = { id: Date.now(), text: taskText, completed: false };
+    setTasks([...tasks, newTask]);
+  };
+
+  const deleteTask = (taskId) => {
+    setTasks(tasks.filter((task) => task.id !== taskId));
+  };
+
+  const toggleComplete = (taskId) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task
+      )
+    );
+  };
+
+  const editTask = (taskId) => {
+    const newText = prompt("Edit task");
+    if (newText) {
+      setTasks(
+        tasks.map((task) =>
+          task.id === taskId ? { ...task, text: newText } : task
+        )
+      );
+    }
+  };
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        height: "80vh",
+        paddingTop: "50px",
+      }}
+    >
+      <Container maxWidth="sm">
+        <Typography variant="h4" align="center" gutterBottom>
+          Pending Tasks
+        </Typography>
+        <Box
+          sx={{
+            minHeight: "80vh",
+            padding: "20px",
+          }}
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          <TaskForm onAdd={addTask} />
+          <List>
+            {tasks.map((task) => (
+              <TaskItem
+                key={task.id}
+                task={task}
+                onDelete={deleteTask}
+                onComplete={toggleComplete}
+                onEdit={editTask}
+              />
+            ))}
+          </List>
+        </Box>
+      </Container>
+      <Container maxWidth="sm">
+        <Typography variant="h4" align="center" gutterBottom>
+          Completed
+        </Typography>
+
+        <Box
+          sx={{
+            backgroundColor: "#FFE9E4",
+            minHeight: "80vh",
+            padding: "20px",
+          }}
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          <SearchForm onSearch={addTask} />
+          <List>
+            {tasks.map((task) => (
+              <SearchItem key={task.id} task={task} onEdit={editTask} />
+            ))}
+          </List>
+        </Box>
+      </Container>
+    </Box>
   );
 }
