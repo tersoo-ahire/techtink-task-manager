@@ -1,26 +1,48 @@
-import { ListItem, Checkbox, IconButton, ListItemText } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
+import { ListItem, IconButton, ListItemText, Tooltip } from "@mui/material";
+import { Delete, Edit, CheckCircle } from "@mui/icons-material";
 
 const TaskItem = ({ task, onDelete, onComplete, onEdit }) => {
   return (
     <ListItem
       secondaryAction={
         <>
-          <IconButton edge="end" color="info" onClick={() => onEdit(task.id)}>
-            <Edit />
-          </IconButton>
-          <IconButton
-            edge="end"
-            color="error"
-            onClick={() => onDelete(task.id)}
-          >
-            <Delete />
-          </IconButton>
+          <Tooltip title="Edit Task" arrow>
+            <IconButton edge="end" color="info" onClick={() => onEdit(task.id)}>
+              <Edit />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Delete Task" arrow>
+            <IconButton
+              edge="end"
+              color="error"
+              onClick={() => onDelete(task.id)}
+            >
+              <Delete />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Complete Task" arrow>
+            <IconButton
+              edge="end"
+              color="success"
+              onClick={() => onComplete(task.id)}
+            >
+              <CheckCircle />
+            </IconButton>
+          </Tooltip>
         </>
       }
     >
-      <Checkbox checked={task.completed} onChange={() => onComplete(task.id)} />
-      <ListItemText primary={task.text} />
+      <ListItemText
+        primary={
+          <>
+            <ul style={{ paddingLeft: "20px" }}>
+              <li style={{ fontWeight: "bold" }}>{task.text}</li>
+            </ul>
+          </>
+        }
+      />
     </ListItem>
   );
 };

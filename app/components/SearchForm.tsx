@@ -1,26 +1,15 @@
-import { useState } from "react";
-import { TextField, Box } from "@mui/material";
+import { TextField } from "@mui/material";
 
-const SearchForm = ({ onSearch }) => {
-  const [input, setInput] = useState("");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!input) return;
-    onSearch(input);
-    setInput("");
-  };
-
+const SearchForm = ({ searchQuery, onSearchChange }) => {
   return (
-    <Box component="form" onSubmit={handleSubmit} display="flex" gap={2} mt={2}>
-      <TextField
-        label="Search"
-        variant="outlined"
-        fullWidth
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      />
-    </Box>
+    <TextField
+      label="Search completed tasks"
+      variant="outlined"
+      fullWidth
+      value={searchQuery}
+      onChange={onSearchChange}
+      style={{ backgroundColor: "white" }}
+    />
   );
 };
 

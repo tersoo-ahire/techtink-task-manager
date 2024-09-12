@@ -19,6 +19,7 @@ const TaskForm = ({ onAdd }) => {
         fullWidth
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        style={{ backgroundColor: "white" }}
       />
       <Button type="submit" variant="contained" color="primary">
         Add
